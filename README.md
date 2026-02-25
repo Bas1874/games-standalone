@@ -93,5 +93,6 @@
 * [Vintage Story](vintage_story)
 * [Wolfenstein: Enemy Territory](wolfenstein_enemy_territory)
   * [ET: Legacy](wolfenstein_enemy_territory/etlegacy)
+* [World Of_Padman](world_of_padman)
 * [Wine (Generic/Template Egg)](wine/generic)
 * [Xonotic](xonotic)
