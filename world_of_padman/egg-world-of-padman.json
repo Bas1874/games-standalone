@@ -4,11 +4,11 @@
         "version": "PLCN_v3",
         "update_url": null
     },
-    "exported_at": "2026-02-25T23:50:33+00:00",
-    "name": "World of Padman",
-    "author": "bas@github.com",
-    "uuid": "dd15d478-4e4b-48fb-8060-9a1e4354cbda",
-    "description": "World of Padman (WoP) standalone server. Architecture agnostic setup, with automatic configuration generation.",
+    "exported_at": "2026-02-27T16:31:09+00:00",
+    "name": "World of PADMAN",
+    "author": "bas1874@github.com",
+    "uuid": "2361e74d-50d4-4582-b63d-93d637188205",
+    "description": "World of PADMAN (WoP) standalone server. with automatic configuration generation.",
     "image": null,
     "tags": [],
     "features": null,
@@ -21,13 +21,13 @@
     },
     "config": {
         "files": "{}",
-        "startup": "{\n    \"done\": \"AAS initialized\"\n}",
+        "startup": "{\n    \"done\": \"InitGame:\"\n}",
         "logs": "{}",
         "stop": "quit"
     },
     "scripts": {
         "installation": {
-            "script": "#!/bin/bash\n# World of Padman Installation Script\n\napt -y update\napt -y install curl jq unzip wget\n\ncd /mnt/server\n\n# 1. Download Game Files\nif [ \"${VERSION}\" == \"latest\" ]; then\n    DOWNLOAD_URL=$(curl -s https://api.github.com/repos/PadWorld-Entertainment/worldofpadman/releases/latest | jq -r '.assets[] | select(.name | contains(\"unified.zip\")) | .browser_download_url')\nelse\n    CLEAN_VERSION=\"${VERSION#v}\"\n    DOWNLOAD_URL=\"https://github.com/PadWorld-Entertainment/worldofpadman/releases/download/v${CLEAN_VERSION}/wop-${CLEAN_VERSION}-unified.zip\"\nfi\n\necho \"Downloading from ${DOWNLOAD_URL}...\"\ncurl -sSL ${DOWNLOAD_URL} -o wop.zip\n\necho \"Extracting files...\"\nunzip -o wop.zip\nrm wop.zip\n\n# 2. Permissions & Architecture Symlink\necho \"Setting up executables...\"\nchmod +x wopded.*\n\nARCH=$(uname -m)\nif [ \"$ARCH\" == \"aarch64\" ] ||[ \"$ARCH\" == \"arm64\" ]; then\n    ln -sf wopded.aarch64 wopded\nelif [ \"$ARCH\" == \"x86_64\" ] ||[ \"$ARCH\" == \"amd64\" ]; then\n    ln -sf wopded.x86_64 wopded\nelse\n    ln -sf wopded.x86 wopded\nfi\n\n# 3. Generate Config\nmkdir -p ${FS_GAME}\n\necho \"Generating ${FS_GAME}/${SERVER_CONFIG}...\"\ncat << EOF > ${FS_GAME}/${SERVER_CONFIG}\n//\n//    World of PADMAN - Panel generated server settings\n//\n\n// Administrator info\n//sets admin \"YOUR NAME HERE\"\n//sets email \"YOUR EMAIL HERE\"\n\n// Server name and message\nset sv_hostName \"${SERVER_HOSTNAME}\"\nset g_MOTD      \"Welcome to World of Padman!\"\n\n// Server settings\nset sv_maxClients \"12\"\nset sv_VoIP       \"1\"\nset sv_maxRate    \"9000\"\n\n// Download Settings\nset sv_allowdownload \"${ALLOW_DOWNLOAD}\"\nset sv_wwwDownload \"0\"\n\n// Bot settings\nset bot_enable     \"1\"\nset bot_minPlayers \"4\"\nset g_spSkill      \"2\"\n\n// Passwords\nset rconPassword \"${RCON_PASSWORD}\"\nset g_password   \"\"\n\n// Game settings\nset g_allowVote \"1\"\nset g_doWarmup  \"1\"\nset g_warmup    \"30\"\n\n// Execution of map rotation\nexec \"rotation.cfg\"\n\n// Fallback map just in case rotation fails\nmap wop_padgarden\nEOF\n\necho \"Installation complete!\"",
+            "script": "#!/bin/bash\n# World of PADMAN Installation Script\n\napt -y update\napt -y install curl jq unzip wget\n\ncd /mnt/server\n\n# 1. Download Game Files\nif [ \"${VERSION}\" == \"latest\" ]; then\n    DOWNLOAD_URL=$(curl -s https://api.github.com/repos/PadWorld-Entertainment/worldofpadman/releases/latest | jq -r '.assets[] | select(.name | contains(\"unified.zip\")) | .browser_download_url')\nelse\n    CLEAN_VERSION=\"${VERSION#v}\"\n    DOWNLOAD_URL=\"https://github.com/PadWorld-Entertainment/worldofpadman/releases/download/v${CLEAN_VERSION}/wop-${CLEAN_VERSION}-unified.zip\"\nfi\n\necho \"Downloading from ${DOWNLOAD_URL}...\"\ncurl -sSL ${DOWNLOAD_URL} -o wop.zip\n\necho \"Extracting files...\"\nunzip -q -o wop.zip\nrm wop.zip\n\n# 2. Permissions & Architecture Symlink\necho \"Setting up executables...\"\nchmod +x wopded.*\n\nARCH=$(uname -m)\nif [ \"$ARCH\" == \"aarch64\" ] || [ \"$ARCH\" == \"arm64\" ]; then\n    ln -sf wopded.aarch64 wopded\nelif [ \"$ARCH\" == \"x86_64\" ] || [ \"$ARCH\" == \"amd64\" ]; then\n    ln -sf wopded.x86_64 wopded\nelse\n    ln -sf wopded.x86 wopded\nfi\n\n# 3. Generate Config\nmkdir -p ${FS_GAME}\n\necho \"Generating ${FS_GAME}/${SERVER_CONFIG}...\"\ncat << EOF > ${FS_GAME}/${SERVER_CONFIG}\n//\n//    World of PADMAN - Panel generated server settings\n//\n\n// Server name and message\nset sv_hostName \"${SERVER_HOSTNAME}\"\nset g_MOTD      \"Welcome to World of PADMAN!\"\n\n// Server settings\nset sv_maxClients \"12\"\nset sv_VoIP       \"1\"\nset sv_maxRate    \"9000\"\n\n// Download Settings\nset sv_allowdownload \"${ALLOW_DOWNLOAD}\"\n\n// Bot settings\nset bot_enable     \"1\"\nset bot_minPlayers \"4\"\nset g_spSkill      \"2\"\n\n// Passwords\nset rconPassword \"${RCON_PASSWORD}\"\nset g_password   \"\"\n\n// Game settings\nset g_allowVote \"1\"\nset g_doWarmup  \"1\"\nset g_warmup    \"30\"\n\n// Execution of map rotation\nexec \"rotation.cfg\"\n\n// Fallback map just in case rotation fails\nmap wop_padgarden\nEOF\n\necho \"Installation complete!\"",
             "container": "debian:bookworm-slim",
             "entrypoint": "bash"
         }
@@ -61,7 +61,7 @@
         },
         {
             "name": "Game Version",
-            "description": "The version of World of Padman to download (e.g., latest, 1.7.0, or v1.7.0).",
+            "description": "The version of World of PADMAN to download (e.g., latest, 1.7.0, or v1.7.0).",
             "env_variable": "VERSION",
             "default_value": "latest",
             "user_viewable": true,
@@ -76,13 +76,13 @@
             "name": "Max RAM (MB)",
             "description": "Allocated memory (com_hunkMegs).",
             "env_variable": "MAX_RAM",
-            "default_value": "512",
+            "default_value": "256",
             "user_viewable": true,
             "user_editable": true,
             "rules": [
                 "required",
                 "numeric",
-                "min:256"
+                "min:128"
             ],
             "sort": null
         },
@@ -101,13 +101,13 @@
         },
         {
             "name": "RCON Password",
-            "description": "Password for remote admin. Only written during first install.",
+            "description": "Password for remote admin. Leave empty to disable RCON.",
             "env_variable": "RCON_PASSWORD",
-            "default_value": "changeme",
+            "default_value": "",
             "user_viewable": true,
             "user_editable": true,
             "rules": [
-                "required",
+                "nullable",
                 "string"
             ],
             "sort": null
@@ -116,7 +116,7 @@
             "name": "Server Hostname",
             "description": "The name of the server displayed in the browser.",
             "env_variable": "SERVER_HOSTNAME",
-            "default_value": "A World of Padman Server",
+            "default_value": "A World of PADMAN Server",
             "user_viewable": true,
             "user_editable": true,
             "rules": [
